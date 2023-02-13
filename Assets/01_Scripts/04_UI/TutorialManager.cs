@@ -1,60 +1,47 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class TutorialManager : MonoBehaviour
 {
-
     public GameObject TutorialMoving;
     public GameObject TutorialZooming;
     public GameObject TutorialAttacking;
 
-    public Collider TutorialAttackingCollider;
-    public Collider TutorialZoomingCollider;
+    private bool ZoomAlreadyActivated;
+    private bool AttackAlreadyActivated;
 
-
-    private void Start()
-    {
-        TutorialAttackingCollider = GetComponent<Collider>();
-        TutorialZoomingCollider = GetComponent<Collider>();
-    }
     void Update()
     {
-        if (TutorialMoving.activeSelf && Input.GetMouseButton(0))
+        if (TutorialMoving.activeSelf && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)))
         {
             Cursor.visible = false;
             TutorialMoving.SetActive(false);
-        }        
-        
-        if (TutorialZooming.activeSelf && Input.GetMouseButton(1))
+        }
+
+        if (TutorialZooming.activeSelf && Input.GetMouseButtonDown(1))
         {
             Cursor.visible = false;
             TutorialZooming.SetActive(false);
         }
 
-        if (TutorialAttacking.activeSelf && Input.GetMouseButton(0))
+        if (TutorialAttacking.activeSelf && Input.GetMouseButtonDown(0))
         {
             Cursor.visible = false;
             TutorialAttacking.SetActive(false);
         }
     }
 
-    void OnCollisionEnter(Collision dataFromCollision)
+    public void TriggerEntered(string triggerName)
     {
-        Debug.Log(dataFromCollision.gameObject.name);
-        Debug.Log("wow");
-        if (dataFromCollision.gameObject.name == "ZoomingBox")
+        Debug.Log(triggerName);
+        if (triggerName == "ZoomingTrigger"&& ZoomAlreadyActivated == false)
         {
             TutorialZooming.SetActive(true);
-            TutorialZoomingCollider.enabled = !TutorialZoomingCollider.enabled;
-            Debug.Log("lol");
+            ZoomAlreadyActivated = true;
         }
-
-        if (dataFromCollision.gameObject.name == "AttackBox")
+        else if (triggerName == "AttackTrigger"&& AttackAlreadyActivated == false)
         {
             TutorialAttacking.SetActive(true);
-            TutorialAttackingCollider.enabled = !TutorialAttackingCollider.enabled;
+            AttackAlreadyActivated = true;
         }
     }
 }
