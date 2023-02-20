@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -53,6 +53,8 @@ public class EnemyAI : MonoBehaviour
     // Declare a variable to store the direction to the player
     Vector3 direction;
 
+    public string tutorialSceneName = "Tutorial";
+    public bool tutorialIsCompleted;
 
     void Awake()
     {
@@ -73,6 +75,7 @@ public class EnemyAI : MonoBehaviour
 
         // Initialize the current health to the maximum health
         currentHealth = maxHealth;
+        CheckIfTutorialCompleted();
     }
 
 
@@ -102,6 +105,25 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    public void CheckIfTutorialCompleted()
+    {
+        if (SceneManager.GetActiveScene().name != tutorialSceneName)
+        {
+            tutorialIsCompleted = true;
+            Debug.Log(tutorialIsCompleted);
+        }
+
+        if (tutorialIsCompleted) 
+        {
+            navMeshAgent.enabled = true;
+            return;
+        }
+        else
+        {
+            navMeshAgent.enabled = false;
+        }
+    }
+
     public void SearchWalkPoint()
     {
         Vector3 randomDirection = Random.insideUnitSphere * walkPointRange;
@@ -120,7 +142,7 @@ public class EnemyAI : MonoBehaviour
 
     void Patrol()
     {
-        if (!walkPointSet)
+        if (!walkPointSet && tutorialIsCompleted)
         {
             SearchWalkPoint();
 
@@ -283,18 +305,19 @@ public class EnemyAI : MonoBehaviour
         if (currentHealth <= 0)
         {
             currentHealth = 0;
+            //play death animation
+            animator.SetTrigger(dieTriggerHash);
             StartCoroutine("Die");
+            Debug.Log("ok");
         }
     }
 
     public IEnumerator Die()
     {
-
-        //play death animation
-        animator.SetTrigger(dieTriggerHash);
-
         //destroy game object   
         yield return new WaitForSeconds(3);
+        GameObject doorOpener = GameObject.Find("DoorManager");
+        doorOpener.GetComponent<DoorOpener>().OpenDoor();
         Destroy(gameObject);
     }
 }

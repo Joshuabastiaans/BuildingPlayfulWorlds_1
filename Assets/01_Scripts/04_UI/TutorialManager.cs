@@ -32,7 +32,6 @@ public class TutorialManager : MonoBehaviour
 
     public void TriggerEntered(string triggerName)
     {
-        Debug.Log(triggerName);
         if (triggerName == "ZoomingTrigger"&& ZoomAlreadyActivated == false)
         {
             TutorialZooming.SetActive(true);
@@ -42,6 +41,12 @@ public class TutorialManager : MonoBehaviour
         {
             TutorialAttacking.SetActive(true);
             AttackAlreadyActivated = true;
+            EnemyAI[] enemyAIs = GameObject.FindObjectsOfType<EnemyAI>();
+            foreach (EnemyAI enemyAI in enemyAIs)
+            {
+                enemyAI.tutorialIsCompleted = true;
+                enemyAI.CheckIfTutorialCompleted();
+            }
         }
     }
 }

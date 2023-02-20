@@ -320,8 +320,6 @@ public class AnimationAndMovementController : MonoBehaviour
 
     void handleAnimation()
     {
-
-
         bool isWalking = animator.GetBool(isWalkingHash);
         bool isRunning = animator.GetBool(isRunningHash);
         bool isCrouching = animator.GetBool(isCrouchingHash);

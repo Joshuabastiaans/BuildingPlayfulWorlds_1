@@ -20,12 +20,6 @@ public class PlayerHealth : MonoBehaviour
     // A reference to the player's audio source
     private AudioSource audioSource;
 
-    // A reference to the audio clip to play when the player takes damage
-    public AudioClip damageSound;
-
-    // A reference to the audio clip to play when the player dies
-    public AudioClip deathSound;
-
     // A reference to the game over screen
     public GameObject gameOverScreen;
 
@@ -45,6 +39,8 @@ public class PlayerHealth : MonoBehaviour
 
     // declare audiomanager
     public AudioManager audioManager;
+
+    public float heartbeatVolume = 0.5f;
 
     private void Start()
     {
@@ -167,7 +163,7 @@ public class PlayerHealth : MonoBehaviour
 
     void HeartbeatSound()
     {
-        float volume = 1f - (float)currentHealth / (float)maxHealth;
+        float volume = 0.5f - (float)currentHealth / (float)maxHealth;
 
         audioManager.Volume("Heartbeat", volume);
     }
