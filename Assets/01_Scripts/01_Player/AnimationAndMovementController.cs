@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+//using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -169,19 +170,23 @@ public class AnimationAndMovementController : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, yRotation, 0);
     }
 
-    void OnTriggerEnter(Collider other)
+    public void OnHitWithAxe(Collider other)
     {
         if (attackExecuted == false && isAttacking)
         {
             // Check if there are any enemies within range
-            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-            foreach (GameObject enemy in enemies)
+            //GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+            EnemyAI enemy = other.gameObject.GetComponent<EnemyAI>();
+
+            if(enemy != null)
             {
-                // Deal damage to the enemy
-                enemy.GetComponent<EnemyAI>().TakeDamage(attackDamage);
+                other.gameObject.GetComponent<EnemyAI>().TakeDamage(attackDamage);
                 attackExecuted = true;
                 attackTimer = 2.0f;
+                Debug.Log("Hit enemy!");
             }
+
+            Debug.Log("Hit Something!");
         }
     }
 
