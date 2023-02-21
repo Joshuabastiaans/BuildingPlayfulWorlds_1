@@ -3,7 +3,7 @@ using System.Collections.Generic;
 //using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
+using UnityEngine.UIElements;
 
 public class AnimationAndMovementController : MonoBehaviour
 {
@@ -18,6 +18,7 @@ public class AnimationAndMovementController : MonoBehaviour
     int isCrouchingHash;
     int isArmedHash;
     int isAttackingHash;
+    int isDeadHash;
 
 
     //variable to store input values
@@ -59,7 +60,6 @@ public class AnimationAndMovementController : MonoBehaviour
     public GameObject spine;
     public GameObject weapon;
 
-
     // The duration of the attack animation
     public float attackAnimationDuration = 2.0f;
     // The timer for the attack animation
@@ -71,6 +71,7 @@ public class AnimationAndMovementController : MonoBehaviour
     [SerializeField] private LayerMask layerMask;
     Vector3 mousePos;
 
+    public bool isDead;
 
     void Awake()
     {
@@ -83,6 +84,7 @@ public class AnimationAndMovementController : MonoBehaviour
         isCrouchingHash = Animator.StringToHash("isCrouching");
         isArmedHash = Animator.StringToHash("isArmed");
         isAttackingHash = Animator.StringToHash("isAttacking");
+        isDeadHash = Animator.StringToHash("isDead");
 
         playerInput.CharacterControls.Walk.started += onMovementInput;
         playerInput.CharacterControls.Walk.canceled += onMovementInput;
@@ -95,9 +97,6 @@ public class AnimationAndMovementController : MonoBehaviour
         playerInput.CharacterControls.Armed.canceled += onArmed;
         playerInput.CharacterControls.Attack.started += onAttack;
         playerInput.CharacterControls.Attack.canceled += onAttack;
-
-        // Initialize the current health to the maximum health
-        currentHealth = maxHealth;
 
         // Get a reference to the audio manager
         audioManager = FindObjectOfType<AudioManager>();
@@ -185,7 +184,6 @@ public class AnimationAndMovementController : MonoBehaviour
                 attackTimer = 2.0f;
                 Debug.Log("Hit enemy!");
             }
-
             Debug.Log("Hit Something!");
         }
     }
@@ -222,7 +220,10 @@ public class AnimationAndMovementController : MonoBehaviour
         StartCoroutine(DisableArmed());
     }
 
-
+    public void DeathAnimation()
+    {
+        animator.SetBool(isDeadHash, true);
+    }
 
     //will disable being armed after 10 seconds of being armed or attacking
     IEnumerator DisableArmed()
@@ -330,6 +331,7 @@ public class AnimationAndMovementController : MonoBehaviour
         bool isCrouching = animator.GetBool(isCrouchingHash);
         bool isArmed = animator.GetBool(isArmedHash);
         bool isAttacking = animator.GetBool(isAttackingHash);
+
 
         if (isArmedNow)
         {

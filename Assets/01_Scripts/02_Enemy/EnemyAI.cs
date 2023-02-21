@@ -84,7 +84,8 @@ public class EnemyAI : MonoBehaviour
     {
         Patrol,
         Chase,
-        Attack
+        Attack,
+        Dead
     }
 
     private AIState currentState;
@@ -101,6 +102,9 @@ public class EnemyAI : MonoBehaviour
                 break;
             case AIState.Attack:
                 Attack();
+                break;
+            case AIState.Dead:
+                Dead();
                 break;
         }
     }
@@ -273,13 +277,18 @@ public class EnemyAI : MonoBehaviour
 
     }
 
+    void Dead()
+    {
+        transform.position = transform.position;
+    }
+
     void DealDamage()
     {
         // Attack the player
         playerHealth.TakeDamage(damageTaken);
     }
 
-    void OnTriggerEnter(Collider other)
+    public void OnHitWithAxe(Collider other)
     {
         if (other.gameObject.CompareTag("Player")&& !alreadyAttacked)
         {             
@@ -307,8 +316,8 @@ public class EnemyAI : MonoBehaviour
             currentHealth = 0;
             //play death animation
             animator.SetTrigger(dieTriggerHash);
+            currentState = AIState.Dead;
             StartCoroutine("Die");
-            Debug.Log("ok");
         }
     }
 
@@ -316,6 +325,7 @@ public class EnemyAI : MonoBehaviour
     {
         //destroy game object   
         yield return new WaitForSeconds(3);
+        //check if all enemies are dead and open door if so
         GameObject doorOpener = GameObject.Find("DoorManager");
         doorOpener.GetComponent<DoorOpener>().OpenDoor();
         Destroy(gameObject);

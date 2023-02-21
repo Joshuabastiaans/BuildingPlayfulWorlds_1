@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -28,6 +29,8 @@ public class PlayerHealth : MonoBehaviour
 
     // The time in seconds between each healing tick
     public float healingInterval = 1.0f;
+    public float deathWait = 2.0f;
+
 
     // A flag indicating whether the player is currently being damaged
     private bool isDamaged = false;
@@ -66,7 +69,7 @@ public class PlayerHealth : MonoBehaviour
             TakeDamage(10);
             isDamaged = true;
         }
-        if (currentHealth == maxHealth)
+        if (currentHealth >= maxHealth)
         {
             StopCoroutine(RestoreHealth());
         }
@@ -97,16 +100,22 @@ public class PlayerHealth : MonoBehaviour
         }
         else
         {
-            // Trigger the death animation
-            animator.SetTrigger("Die");
-
-            // Play the death sound
-
-            // Show the game over screen
-            // gameOverScreen.SetActive(true);
+            GetComponent<AnimationAndMovementController>().DeathAnimation();
+            Die();
         }
+    }
 
+    IEnumerator Die()
+    {
+        yield return new WaitForSecondsRealtime(deathWait);
+        // Trigger the death animation
+        animator.SetTrigger("Die");
 
+        // Play the death sound
+        audioManager.Play("Death");
+
+        // Show the game over screen
+        gameOverScreen.SetActive(true);
     }
 
     IEnumerator DelayHealing()
